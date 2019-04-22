@@ -12,10 +12,14 @@ import WebKit
 class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
     
     @IBOutlet weak var webView: WKWebView!
+    @IBOutlet weak var toolBar: UIToolbar!
     
     private var webViewUrl: String = "https://helpfeel.notainc.com/SFCHelp"
     
-    func configureView() {
+    @IBAction func goBack(sender: UIButton) {
+        if (self.webView.canGoBack) {
+            self.webView.goBack()
+        }
     }
     
     override func viewDidLoad() {
@@ -26,17 +30,21 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
         // swipeでの戻る進むを許可
         self.webView.allowsBackForwardNavigationGestures = true
-        
-        configureView()
+        self.attachToolbarItems()
     }
     
-//    override func didReceiveMemoryWarning() {
-//        super.didReceiveMemoryWarning()
-//    }
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    func attachToolbarItems() {
+        let historyBackButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(HelpfeelViewController.goBack(sender:)))
+        toolBar.items = [historyBackButton]
+    }
     
     var detailItem: String? {
         didSet {
-            configureView()
+//            configureView()
         }
     }
 }

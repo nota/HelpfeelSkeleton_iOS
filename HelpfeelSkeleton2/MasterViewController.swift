@@ -106,6 +106,7 @@ class MasterViewController: UITableViewController {
                 }
                 item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
                 item.leftItemsSupplementBackButton = true
+                item.title = "Guide"
                 
                 splitViewController!.showDetailViewController(vc, sender: self)
                 tableView.deselectRow(at: indexPath, animated: true)
