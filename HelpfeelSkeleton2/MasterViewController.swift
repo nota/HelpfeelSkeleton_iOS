@@ -75,6 +75,18 @@ class MasterViewController: UITableViewController {
         }
     }
     
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView {
+        let headerImage = UIImageView(frame: CGRect(x:0, y:0, width: tableView.bounds.width, height: 200))
+        headerImage.image = UIImage(named: "sample_image")!
+        let header: UITableViewHeaderFooterView = UITableViewHeaderFooterView()
+        header.addSubview(headerImage)
+        return header
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 200
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath as IndexPath)
         let label = cell?.textLabel?.text
