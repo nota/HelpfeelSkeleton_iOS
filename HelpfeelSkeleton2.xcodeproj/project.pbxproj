@@ -15,6 +15,8 @@
 		A65B997C226D8D5C004F8EE8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A65B997A226D8D5C004F8EE8 /* LaunchScreen.storyboard */; };
 		A65B9987226D8D5C004F8EE8 /* HelpfeelSkeleton2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65B9986226D8D5C004F8EE8 /* HelpfeelSkeleton2Tests.swift */; };
 		A65B9992226D8D5C004F8EE8 /* HelpfeelSkeleton2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65B9991226D8D5C004F8EE8 /* HelpfeelSkeleton2UITests.swift */; };
+		A65B99A3226DA9E2004F8EE8 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A65B99A2226DA9E2004F8EE8 /* WebKit.framework */; };
+		A65B99A5226DAB23004F8EE8 /* HelpfeelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65B99A4226DAB23004F8EE8 /* HelpfeelViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +51,8 @@
 		A65B998D226D8D5C004F8EE8 /* HelpfeelSkeleton2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HelpfeelSkeleton2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A65B9991226D8D5C004F8EE8 /* HelpfeelSkeleton2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpfeelSkeleton2UITests.swift; sourceTree = "<group>"; };
 		A65B9993226D8D5C004F8EE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A65B99A2226DA9E2004F8EE8 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		A65B99A4226DAB23004F8EE8 /* HelpfeelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpfeelViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A65B99A3226DA9E2004F8EE8 /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,6 +88,7 @@
 				A65B9985226D8D5C004F8EE8 /* HelpfeelSkeleton2Tests */,
 				A65B9990226D8D5C004F8EE8 /* HelpfeelSkeleton2UITests */,
 				A65B996D226D8D5A004F8EE8 /* Products */,
+				A65B99A1226DA9E2004F8EE8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -106,6 +112,7 @@
 				A65B9978226D8D5C004F8EE8 /* Assets.xcassets */,
 				A65B997A226D8D5C004F8EE8 /* LaunchScreen.storyboard */,
 				A65B997D226D8D5C004F8EE8 /* Info.plist */,
+				A65B99A4226DAB23004F8EE8 /* HelpfeelViewController.swift */,
 			);
 			path = HelpfeelSkeleton2;
 			sourceTree = "<group>";
@@ -126,6 +133,14 @@
 				A65B9993226D8D5C004F8EE8 /* Info.plist */,
 			);
 			path = HelpfeelSkeleton2UITests;
+			sourceTree = "<group>";
+		};
+		A65B99A1226DA9E2004F8EE8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A65B99A2226DA9E2004F8EE8 /* WebKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -262,6 +277,7 @@
 				A65B9974226D8D5A004F8EE8 /* DetailViewController.swift in Sources */,
 				A65B9972226D8D5A004F8EE8 /* MasterViewController.swift in Sources */,
 				A65B9970226D8D5A004F8EE8 /* AppDelegate.swift in Sources */,
+				A65B99A5226DAB23004F8EE8 /* HelpfeelViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
