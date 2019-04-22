@@ -22,9 +22,20 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
     }
     
+    @IBAction
+    func closeSelf(sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+    
     @IBAction func openChatSupport(sender: UIButton) {
-        let chatSupportVC: UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "chatSupportVC"))!
-        self.present(chatSupportVC, animated: true, completion: nil)
+        let chatSupportVC = storyboard!.instantiateViewController(withIdentifier: "chatSupportVC") as UIViewController
+        let navVC: UINavigationController = UINavigationController(rootViewController: chatSupportVC)
+        
+        let item = navVC.topViewController!.navigationItem
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeSelf(sender:)))
+        item.leftBarButtonItem = closeButton
+        item.title = "Chat support"
+        self.present(navVC, animated: true, completion: nil)
     }
     
     override func viewDidLoad() {
@@ -46,11 +57,7 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         let historyBackButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(HelpfeelViewController.goBack(sender:)))
         let flexbleItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
         let chatSupportButton = UIBarButtonItem(title: "Chat support", style: .plain, target: self, action: #selector(HelpfeelViewController.openChatSupport(sender:)))
-        toolBar.items = [
-            historyBackButton,
-            flexbleItem,
-            chatSupportButton
-        ]
+        toolBar.items = [historyBackButton, flexbleItem, chatSupportButton]
     }
     
     var detailItem: String? {

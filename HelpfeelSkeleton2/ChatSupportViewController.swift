@@ -12,10 +12,6 @@ class ChatSupportViewController: UIViewController {
 
     @IBOutlet weak var navBarItem: UINavigationItem!
     
-    @IBAction func closeSelf(sender: UIButton) {
-        self.dismiss(animated: true)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.attachButtons()
