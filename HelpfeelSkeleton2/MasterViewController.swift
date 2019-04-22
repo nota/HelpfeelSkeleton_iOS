@@ -49,13 +49,13 @@ class MasterViewController: UITableViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-            if let indexPath = tableView.indexPathForSelectedRow {
-                let object = objects[indexPath.row] as! String
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
-                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-                controller.navigationItem.leftItemsSupplementBackButton = true
-            }
+//            if let indexPath = tableView.indexPathForSelectedRow {
+//                let object = objects[indexPath.row] as! String
+//                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+//                controller.detailItem = object
+//                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+//                controller.navigationItem.leftItemsSupplementBackButton = true
+//            }
         }
     }
 
@@ -72,9 +72,8 @@ class MasterViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
-//        let object = objects[indexPath.row] as! NSDate
         let object = objects[indexPath.row] as! String
-        cell.textLabel!.text = object //.description
+        cell.textLabel!.text = object.description
         return cell
     }
 
@@ -91,7 +90,30 @@ class MasterViewController: UITableViewController {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
     }
-
-
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath as IndexPath)
+        // let id = cell?.reuseIdentifier
+        let label = cell?.textLabel?.text
+        // MenuItemごとにViewControllerを指定する
+        switch label {
+            case "Guide":
+                // Helpfeel
+                let vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3") as UIViewController
+                var item = vc.navigationItem
+                if let navController = vc as? UINavigationController {
+                    item = navController.topViewController!.navigationItem
+                }
+                item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
+                item.leftItemsSupplementBackButton = true
+                
+                splitViewController!.showDetailViewController(vc, sender: self)
+                tableView.deselectRow(at: indexPath, animated: true)
+                break
+            default:
+                break
+        }
+        return
+    }
 }
 
