@@ -16,7 +16,12 @@ class MasterViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        insertNewMenuItem()
+        // reverse order
+        prependNewMenuItem(label: "Settings")
+        prependNewMenuItem(label: "Chat support")
+        prependNewMenuItem(label: "Guide")
+        prependNewMenuItem(label: "Home")
+        
         // Do any additional setup after loading the view, typically from a nib.
 //        navigationItem.leftBarButtonItem = editButtonItem
 
@@ -34,8 +39,8 @@ class MasterViewController: UITableViewController {
     }
     
     @objc
-    func insertNewMenuItem() {
-        objects.insert("foo", at: 0)
+    func prependNewMenuItem(label: String) {
+        objects.insert(label, at: 0)
         let indexPath = IndexPath(row: 0, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
     }
