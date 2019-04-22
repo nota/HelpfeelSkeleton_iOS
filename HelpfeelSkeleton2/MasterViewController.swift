@@ -9,10 +9,11 @@
 import UIKit
 
 class MasterViewController: UITableViewController {
-
+    static private let defaultHelpfeelUrl = "https://helpfeel.notainc.com/SFCHelp"
+    
     var detailViewController: DetailViewController? = nil
     var objects = [Any]()
-
+    private var helpfeelUrl: String = MasterViewController.defaultHelpfeelUrl
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,15 +94,23 @@ class MasterViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath as IndexPath)
-        // let id = cell?.reuseIdentifier
         let label = cell?.textLabel?.text
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
         var vc = storyboard!.instantiateViewController(withIdentifier: "homeVC") as UIViewController
+        
+        // Settings
+        if (label == "Settings") {
+            self.askWebViewUrl()
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
         
         // MenuItemごとにViewControllerを指定する
         switch label {
         case "Guide":
             // Helpfeel
             vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3") as UIViewController
+            appDelegate.helpfeelUrl = self.helpfeelUrl
             setupNextVC(title: "Guide", vc: vc)
             break
         case "Chat support":
@@ -110,7 +119,6 @@ class MasterViewController: UITableViewController {
             break
         default:
             setupNextVC(title: "Your app", vc: vc)
-            break
         }
         
         splitViewController!.showDetailViewController(vc, sender: self)
@@ -125,6 +133,33 @@ class MasterViewController: UITableViewController {
         item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
         item.leftItemsSupplementBackButton = true
         item.title = title
+    }
+    
+    func askWebViewUrl() {
+        let alert = UIAlertController(title: "WebView URL", message: "Please input here.", preferredStyle: .alert)
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: {(action:UIAlertAction!) -> Void in
+            let textFields:Array<UITextField>? = alert.textFields
+            if (textFields?.count)! > 0 {
+                // 入力されたURLを取得
+                let url: String! = textFields![0].text!
+                if (url.utf8.count == 0) {
+                    return
+                }
+                self.helpfeelUrl = url!
+            }
+        })
+        alert.addAction(defaultAction)
+        
+        let resetAction = UIAlertAction(title: "Reset", style: .destructive, handler: {(action:UIAlertAction!) -> Void in
+            self.helpfeelUrl = MasterViewController.defaultHelpfeelUrl
+        })
+        alert.addAction(resetAction)
+        
+        // TextFieldを追加
+        alert.addTextField(configurationHandler: {(textField: UITextField!) -> Void in
+            textField.placeholder = self.helpfeelUrl
+        })
+        present(alert, animated: true, completion: nil)
     }
 }
 

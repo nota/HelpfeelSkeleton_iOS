@@ -40,7 +40,9 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
-            
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.webViewUrl = appDelegate.helpfeelUrl!
+        
         if let url = URL(string: self.webViewUrl) {
             self.webView.load(URLRequest(url: url))
         }
