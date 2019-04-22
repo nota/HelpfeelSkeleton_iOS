@@ -95,7 +95,8 @@ class MasterViewController: UITableViewController {
         let cell = tableView.cellForRow(at: indexPath as IndexPath)
         // let id = cell?.reuseIdentifier
         let label = cell?.textLabel?.text
-        var vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3") as UIViewController
+        var vc = storyboard!.instantiateViewController(withIdentifier: "homeVC") as UIViewController
+        
         // MenuItemごとにViewControllerを指定する
         switch label {
         case "Guide":
@@ -108,12 +109,12 @@ class MasterViewController: UITableViewController {
             setupNextVC(title: "Chat support", vc: vc)
             break
         default:
+            setupNextVC(title: "Your app", vc: vc)
             break
         }
         
         splitViewController!.showDetailViewController(vc, sender: self)
         tableView.deselectRow(at: indexPath, animated: true)
-        return
     }
     
     func setupNextVC(title: String, vc: UIViewController) {
