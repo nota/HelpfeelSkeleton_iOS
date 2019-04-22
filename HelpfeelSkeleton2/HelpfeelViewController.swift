@@ -22,6 +22,11 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
     }
     
+    @IBAction func openChatSupport(sender: UIButton) {
+        let chatSupportVC: UIViewController = (self.storyboard?.instantiateViewController(withIdentifier: "chatSupportVC"))!
+        self.present(chatSupportVC, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
             
@@ -39,7 +44,13 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     func attachToolbarItems() {
         let historyBackButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(HelpfeelViewController.goBack(sender:)))
-        toolBar.items = [historyBackButton]
+        let flexbleItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+        let chatSupportButton = UIBarButtonItem(title: "Chat support", style: .plain, target: self, action: #selector(HelpfeelViewController.openChatSupport(sender:)))
+        toolBar.items = [
+            historyBackButton,
+            flexbleItem,
+            chatSupportButton
+        ]
     }
     
     var detailItem: String? {
