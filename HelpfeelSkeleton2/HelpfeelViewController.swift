@@ -100,6 +100,7 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             item = navController.topViewController!.navigationItem
         }
         let leftButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem(rawValue: button)!, target: self, action: #selector(historyBack(sender:)))
+        leftButton.tintColor = UIColor.darkGray
         item.hidesBackButton = true
         item.leftBarButtonItem = leftButton
         item.leftItemsSupplementBackButton = true

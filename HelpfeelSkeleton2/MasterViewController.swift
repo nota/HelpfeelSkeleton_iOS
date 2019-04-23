@@ -135,6 +135,7 @@ class MasterViewController: UITableViewController {
         let navVC: UINavigationController = UINavigationController(rootViewController: vc)
         let item = navVC.topViewController!.navigationItem
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeSelf(sender:)))
+        closeButton.tintColor = UIColor.darkGray
         item.leftBarButtonItem = closeButton
         item.title = title
         self.present(navVC, animated: true, completion: nil)
