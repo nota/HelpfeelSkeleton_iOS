@@ -11,13 +11,23 @@ import WebKit
 
 class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
     @IBOutlet weak var webView: WKWebView!
-    @IBOutlet weak var toolBar: UIToolbar!
     
     private var webViewUrl = ""
     
     @IBAction
     func closeSelf(sender: UIButton) {
         self.dismiss(animated: true)
+    }
+    
+    @IBAction
+    func historyBack(sender: UIButton) {
+        if (self.webView.canGoBack) {
+            // history stackがあればbrower backする
+            self.webView.goBack()
+        } else {
+            // 呼び出し元のVCに戻る
+            self.navigationController!.popViewController(animated: true)
+        }
     }
     
     @IBAction func openChatSupport(sender: UIButton) {
@@ -72,7 +82,7 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
         decisionHandler(.cancel)
         let vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3")
-        setupNextVC(url: url, vc: vc)
+        setupNextVC(url: url, button: 101, vc: vc) // buttonPrevious
         self.navigationController!.pushViewController(vc, animated: true)
     }
     
@@ -83,14 +93,15 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         print(pageTitle)
     }
     
-    func setupNextVC(url: String, vc: UIViewController) {
+    func setupNextVC(url: String, button: Int, vc: UIViewController) {
         (vc as? HelpfeelViewController)?.webViewUrl = url
         var item = vc.navigationItem
         if let navController = vc as? UINavigationController {
             item = navController.topViewController!.navigationItem
         }
-        item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
-        item.leftBarButtonItem?.title = ""
+        let leftButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonItem.SystemItem(rawValue: button)!, target: self, action: #selector(historyBack(sender:)))
+        item.hidesBackButton = true
+        item.leftBarButtonItem = leftButton
         item.leftItemsSupplementBackButton = true
         item.title = "Your app guide"
     }
