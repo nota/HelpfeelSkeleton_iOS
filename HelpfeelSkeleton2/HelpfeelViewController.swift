@@ -43,6 +43,7 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.addSubview(self.webView)
         self.webView.uiDelegate = self
         self.webView.navigationDelegate = self
         
@@ -70,20 +71,25 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     // リクエスト前
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
-        decisionHandler(.allow)
-    }
-    
-    // レスポンス取得後
-    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-        let url = webView.url!.absoluteString
+        let url = navigationAction.request.url!.absoluteString
+        print("### " + url)
         if (self.webViewUrl.hasPrefix(url) || url.hasPrefix(self.webViewUrl)) {
             decisionHandler(.allow)
             return
         }
         decisionHandler(.cancel)
+        // TODO:
+        if (url.contains(".stripe.")) {
+            return
+        }
         let vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3")
         setupNextVC(url: url, button: 101, vc: vc) // buttonPrevious
         self.navigationController!.pushViewController(vc, animated: true)
+    }
+    
+    // レスポンス取得後
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        decisionHandler(.allow)
     }
     
     // 読み込み完了
