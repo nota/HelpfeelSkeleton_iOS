@@ -15,12 +15,6 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     private var webViewUrl = ""
     
-    @IBAction func goBack(sender: UIButton) {
-        if (self.webView.canGoBack) {
-            self.webView.goBack()
-        }
-    }
-    
     @IBAction
     func closeSelf(sender: UIButton) {
         self.dismiss(animated: true)
@@ -52,18 +46,16 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
         // swipeでの戻る進むを許可
         self.webView.allowsBackForwardNavigationGestures = true
-        self.attachToolbarItems()
+        self.attachNavItemButtons()
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
-    func attachToolbarItems() {
-        let historyBackButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(HelpfeelViewController.goBack(sender:)))
-        let flexbleItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-        let chatSupportButton = UIBarButtonItem(title: "Chat support", style: .plain, target: self, action: #selector(HelpfeelViewController.openChatSupport(sender:)))
-        toolBar.items = [historyBackButton, flexbleItem, chatSupportButton]
+    func attachNavItemButtons() {
+        let chatSupportButton = UIBarButtonItem(title: "Chat", style: .plain, target: self, action: #selector(HelpfeelViewController.openChatSupport(sender:)))
+        self.navigationItem.rightBarButtonItem = chatSupportButton
     }
     
     // リクエスト前
@@ -87,7 +79,8 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     // 読み込み完了
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         let pageTitle = webView.title!
-        self.navigationItem.title = pageTitle
+//        self.navigationItem.title = pageTitle
+        print(pageTitle)
     }
     
     func setupNextVC(url: String, vc: UIViewController) {
@@ -98,6 +91,7 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         }
         item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
         item.leftItemsSupplementBackButton = true
+        item.title = "Guide"
     }
 
     
