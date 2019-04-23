@@ -72,10 +72,17 @@ class MasterViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView {
+        // Header image
         let headerImage = UIImageView(frame: CGRect(x:0, y:0, width: tableView.bounds.width, height: 200))
         headerImage.image = UIImage(named: "table_header")!
         let header: UITableViewHeaderFooterView = UITableViewHeaderFooterView()
         header.addSubview(headerImage)
+        // Header Title
+        let label : UILabel = UILabel(frame: CGRect(x: 20, y: 140, width: tableView.bounds.width, height: 32))
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(ofSize: 32)
+        label.text = "Your app"
+        header.addSubview(label)
         return header
     }
     
