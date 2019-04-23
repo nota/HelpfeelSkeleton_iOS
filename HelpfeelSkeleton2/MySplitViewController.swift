@@ -16,5 +16,8 @@ class MySplitViewController: UISplitViewController, UISplitViewControllerDelegat
         // 可能ならMaster, Detailをともに表示する
         preferredDisplayMode = .allVisible
         
+        // 起動直後にHomeを表示
+        let vc = storyboard!.instantiateViewController(withIdentifier: "homeVC") as UIViewController
+        showDetailViewController(vc, sender: self)
     }
 }
