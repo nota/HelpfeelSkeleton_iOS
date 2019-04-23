@@ -9,7 +9,7 @@
 import UIKit
 import WebKit
 
-class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
+class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate {
     @IBOutlet weak var webView: WKWebView!
     
     private var webViewUrl = ""
@@ -46,6 +46,7 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         self.view.addSubview(self.webView)
         self.webView.uiDelegate = self
         self.webView.navigationDelegate = self
+        self.navigationController!.interactivePopGestureRecognizer!.delegate = self
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if (self.webViewUrl.utf8.count == 0) {
