@@ -15,6 +15,11 @@ class MasterViewController: UITableViewController {
     var objects = [Any]()
     private var helpfeelUrl: String = MasterViewController.defaultHelpfeelUrl
 
+    @IBAction
+    func closeSelf(sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // reverse order
@@ -94,21 +99,19 @@ class MasterViewController: UITableViewController {
         // MenuItemごとにViewControllerを指定する
         switch label {
         case "Guide":
-            // Helpfeel
             vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3") as UIViewController
             appDelegate.helpfeelUrl = self.helpfeelUrl
-            setupNextVC(title: "Guide", vc: vc)
+            popupNextVC(title: " Your app guide", vc: vc)
             break
         case "Chat support":
             vc = storyboard!.instantiateViewController(withIdentifier: "chatSupportVC") as UIViewController
-            setupNextVC(title: "Chat support", vc: vc)
+            popupNextVC(title: "Chat support", vc: vc)
             break
         default:
             setupNextVC(title: "Your app", vc: vc)
+            splitViewController!.showDetailViewController(vc, sender: self)
+            tableView.deselectRow(at: indexPath, animated: true)
         }
-        
-        splitViewController!.showDetailViewController(vc, sender: self)
-        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func setupNextVC(title: String, vc: UIViewController) {
@@ -119,6 +122,15 @@ class MasterViewController: UITableViewController {
         item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
         item.leftItemsSupplementBackButton = true
         item.title = title
+    }
+    
+    func popupNextVC(title: String, vc: UIViewController) {
+        let navVC: UINavigationController = UINavigationController(rootViewController: vc)
+        let item = navVC.topViewController!.navigationItem
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeSelf(sender:)))
+        item.leftBarButtonItem = closeButton
+        item.title = title
+        self.present(navVC, animated: true, completion: nil)
     }
     
     func askWebViewUrl() {
