@@ -101,7 +101,7 @@ class MasterViewController: UITableViewController {
         case "Guide":
             vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3") as UIViewController
             appDelegate.helpfeelUrl = self.helpfeelUrl
-            popupNextVC(title: " Your app guide", vc: vc)
+            popupNextVC(title: "Your app guide", vc: vc)
             break
         case "Chat support":
             vc = storyboard!.instantiateViewController(withIdentifier: "chatSupportVC") as UIViewController

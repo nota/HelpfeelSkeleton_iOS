@@ -90,11 +90,11 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
             item = navController.topViewController!.navigationItem
         }
         item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
+        item.leftBarButtonItem?.title = ""
         item.leftItemsSupplementBackButton = true
-        item.title = "Guide"
+        item.title = "Your app guide"
     }
 
-    
     var detailItem: String? {
         didSet {
 //            configureView()
