@@ -10,11 +10,10 @@ import UIKit
 import WebKit
 
 class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
-    
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var toolBar: UIToolbar!
     
-    private var webViewUrl: String = "https://helpfeel.notainc.com/SFCHelp"
+    private var webViewUrl = ""
     
     @IBAction func goBack(sender: UIButton) {
         if (self.webView.canGoBack) {
@@ -40,8 +39,13 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.webView.uiDelegate = self
+        self.webView.navigationDelegate = self
+        
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        self.webViewUrl = appDelegate.helpfeelUrl!
+        if (self.webViewUrl.utf8.count == 0) {
+          self.webViewUrl = appDelegate.helpfeelUrl!
+        }
         
         if let url = URL(string: self.webViewUrl) {
             self.webView.load(URLRequest(url: url))
@@ -61,6 +65,41 @@ class HelpfeelViewController: UIViewController, WKNavigationDelegate, WKUIDelega
         let chatSupportButton = UIBarButtonItem(title: "Chat support", style: .plain, target: self, action: #selector(HelpfeelViewController.openChatSupport(sender:)))
         toolBar.items = [historyBackButton, flexbleItem, chatSupportButton]
     }
+    
+    // リクエスト前
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
+        decisionHandler(.allow)
+    }
+    
+    // レスポンス取得後
+    func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
+        let url = webView.url!.absoluteString
+        if (self.webViewUrl.hasPrefix(url) || url.hasPrefix(self.webViewUrl)) {
+            decisionHandler(.allow)
+            return
+        }
+        decisionHandler(.cancel)
+        let vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3")
+        setupNextVC(url: url, vc: vc)
+        self.navigationController!.pushViewController(vc, animated: true)
+    }
+    
+    // 読み込み完了
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        let pageTitle = webView.title!
+        self.navigationItem.title = pageTitle
+    }
+    
+    func setupNextVC(url: String, vc: UIViewController) {
+        (vc as? HelpfeelViewController)?.webViewUrl = url
+        var item = vc.navigationItem
+        if let navController = vc as? UINavigationController {
+            item = navController.topViewController!.navigationItem
+        }
+        item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
+        item.leftItemsSupplementBackButton = true
+    }
+
     
     var detailItem: String? {
         didSet {
