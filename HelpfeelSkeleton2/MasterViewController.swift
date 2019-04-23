@@ -73,7 +73,7 @@ class MasterViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView {
         let headerImage = UIImageView(frame: CGRect(x:0, y:0, width: tableView.bounds.width, height: 200))
-        headerImage.image = UIImage(named: "sample_image")!
+        headerImage.image = UIImage(named: "table_header")!
         let header: UITableViewHeaderFooterView = UITableViewHeaderFooterView()
         header.addSubview(headerImage)
         return header
