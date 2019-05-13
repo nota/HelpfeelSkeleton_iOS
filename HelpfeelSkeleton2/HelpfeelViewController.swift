@@ -10,9 +10,9 @@ import UIKit
 import WebKit
 
 class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate {
-    @IBOutlet weak var webView: WKWebView!
-    
+    @IBOutlet var webView: WKWebView!
     private var webViewUrl = ""
+    private static let processPool = WKProcessPool()
     
     @IBAction
     func closeSelf(sender: UIButton) {
@@ -41,11 +41,27 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         self.present(navVC, animated: true, completion: nil)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.addSubview(self.webView)
+    // Initialize webView and add to subview
+    func initWkWebView () {
+        // Share session between WebViews
+        let webViewConfiguration = WKWebViewConfiguration()
+        let processPool = HelpfeelViewController.processPool
+        webViewConfiguration.processPool = processPool
+        
+        // Set webView size
+        let statusBarHeight: CGFloat! = UIApplication.shared.statusBarFrame.height
+        self.webView = WKWebView(
+            frame: CGRect(x: 0, y: statusBarHeight, width: self.view.bounds.width, height: self.view.bounds.height - statusBarHeight),
+            configuration: webViewConfiguration)
         self.webView.uiDelegate = self
         self.webView.navigationDelegate = self
+        self.view.addSubview(self.webView)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.initWkWebView()
         self.navigationController!.interactivePopGestureRecognizer!.delegate = self
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -81,11 +97,14 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
         let url = navigationAction.request.url!.absoluteString
         print("### " + url)
-        if (isSameUrl(a: self.webViewUrl, b: url)) {
+        if (self.isSameUrl(a: self.webViewUrl, b: url)) {
             decisionHandler(.allow)
             return
         }
         decisionHandler(.cancel)
+        if (!url.hasPrefix("http://") && !url.hasPrefix("https://")) {
+            return
+        }
         // TODO:
         if (url.contains(".stripe.")) {
             return
