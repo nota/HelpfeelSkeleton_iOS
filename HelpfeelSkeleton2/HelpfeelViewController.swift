@@ -65,6 +65,13 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         super.didReceiveMemoryWarning()
     }
     
+    func isSameUrl (a: String, b: String) -> Bool {
+        // remove a trailing slash
+        let _a = a.hasSuffix("/") ? String(a.dropLast()) : a
+        let _b = b.hasSuffix("/") ? String(b.dropLast()) : b
+        return _a == _b
+    }
+    
     func attachNavItemButtons() {
         let chatSupportButton = UIBarButtonItem(title: "Chat", style: .plain, target: self, action: #selector(HelpfeelViewController.openChatSupport(sender:)))
         self.navigationItem.rightBarButtonItem = chatSupportButton
@@ -74,7 +81,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
         let url = navigationAction.request.url!.absoluteString
         print("### " + url)
-        if (self.webViewUrl.hasPrefix(url) || url.hasPrefix(self.webViewUrl)) {
+        if (isSameUrl(a: self.webViewUrl, b: url)) {
             decisionHandler(.allow)
             return
         }
