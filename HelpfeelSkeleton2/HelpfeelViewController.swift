@@ -96,7 +96,6 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     // リクエスト前
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
         let url = navigationAction.request.url!.absoluteString
-        print("### " + url)
         if (self.isSameUrl(a: self.webViewUrl, b: url)) {
             decisionHandler(.allow)
             return
@@ -121,9 +120,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     
     // 読み込み完了
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        let pageTitle = webView.title!
-//        self.navigationItem.title = pageTitle
-        print(pageTitle)
+        self.navigationItem.title = webView.title!
     }
     
     func setupNextVC(url: String, button: Int, vc: UIViewController) {
