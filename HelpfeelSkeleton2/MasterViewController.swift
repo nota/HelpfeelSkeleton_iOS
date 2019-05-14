@@ -15,6 +15,11 @@ class MasterViewController: UITableViewController {
     var objects = [Any]()
     private var helpfeelUrl: String = MasterViewController.defaultHelpfeelUrl
 
+    @IBAction
+    func closeSelf(sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // reverse order
@@ -67,10 +72,17 @@ class MasterViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView {
+        // Header image
         let headerImage = UIImageView(frame: CGRect(x:0, y:0, width: tableView.bounds.width, height: 200))
-        headerImage.image = UIImage(named: "sample_image")!
+        headerImage.image = UIImage(named: "table_header")!
         let header: UITableViewHeaderFooterView = UITableViewHeaderFooterView()
         header.addSubview(headerImage)
+        // Header Title
+        let label : UILabel = UILabel(frame: CGRect(x: 20, y: 140, width: tableView.bounds.width, height: 32))
+        label.textColor = UIColor.white
+        label.font = UIFont.systemFont(ofSize: 32)
+        label.text = "Your app"
+        header.addSubview(label)
         return header
     }
     
@@ -94,21 +106,19 @@ class MasterViewController: UITableViewController {
         // MenuItemごとにViewControllerを指定する
         switch label {
         case "Guide":
-            // Helpfeel
             vc = storyboard!.instantiateViewController(withIdentifier: "helpfeelVC3") as UIViewController
             appDelegate.helpfeelUrl = self.helpfeelUrl
-            setupNextVC(title: "Guide", vc: vc)
+            popupNextVC(title: "Your app guide", vc: vc)
             break
         case "Chat support":
             vc = storyboard!.instantiateViewController(withIdentifier: "chatSupportVC") as UIViewController
-            setupNextVC(title: "Chat support", vc: vc)
+            popupNextVC(title: "Chat support", vc: vc)
             break
         default:
             setupNextVC(title: "Your app", vc: vc)
+            splitViewController!.showDetailViewController(vc, sender: self)
+            tableView.deselectRow(at: indexPath, animated: true)
         }
-        
-        splitViewController!.showDetailViewController(vc, sender: self)
-        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func setupNextVC(title: String, vc: UIViewController) {
@@ -119,6 +129,16 @@ class MasterViewController: UITableViewController {
         item.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
         item.leftItemsSupplementBackButton = true
         item.title = title
+    }
+    
+    func popupNextVC(title: String, vc: UIViewController) {
+        let navVC: UINavigationController = UINavigationController(rootViewController: vc)
+        let item = navVC.topViewController!.navigationItem
+        let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeSelf(sender:)))
+        closeButton.tintColor = UIColor.darkGray
+        item.leftBarButtonItem = closeButton
+        item.title = title
+        self.present(navVC, animated: true, completion: nil)
     }
     
     func askWebViewUrl() {
