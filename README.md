@@ -4,6 +4,9 @@
 - Swift 5.0.1
 - XCode 10.2.1
 
+## External libraries or SDKs
+None.
+
 ## Setup
 ```
 $ git clone git@github.com:nota/HelpfeelSkeleton_iOS.git
