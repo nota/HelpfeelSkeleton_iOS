@@ -12,6 +12,7 @@ import WebKit
 class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate {
     @IBOutlet var webView: WKWebView!
     private var webViewUrl = ""
+
     private static let processPool = WKProcessPool()
     
     @IBAction
@@ -66,7 +67,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         if (self.webViewUrl.utf8.count == 0) {
-          self.webViewUrl = appDelegate.helpfeelUrl!
+            self.webViewUrl = appDelegate.helpfeelUrl!
         }
         
         if let url = URL(string: self.webViewUrl) {
@@ -88,6 +89,11 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         return _a == _b
     }
     
+    func isHelpfeelRootUrl (url: String) -> Bool {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return self.isSameUrl(a: url, b: appDelegate.helpfeelUrl!)
+    }
+    
     func attachNavItemButtons() {
         let chatSupportButton = UIBarButtonItem(title: "Chat", style: .plain, target: self, action: #selector(HelpfeelViewController.openChatSupport(sender:)))
         self.navigationItem.rightBarButtonItem = chatSupportButton
@@ -102,6 +108,11 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         }
         decisionHandler(.cancel)
         if (!url.hasPrefix("http://") && !url.hasPrefix("https://")) {
+            return
+        }
+        if (self.isHelpfeelRootUrl(url: url)) {
+            // Return to the root of the transition history
+            self.navigationController!.popToRootViewController(animated: true)
             return
         }
         // TODO:
@@ -134,7 +145,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         item.hidesBackButton = true
         item.leftBarButtonItem = leftButton
         item.leftItemsSupplementBackButton = true
-        item.title = "Your app guide"
+        item.title = ""
     }
 
     var detailItem: String? {
