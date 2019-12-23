@@ -10,6 +10,18 @@ import UIKit
 import WebKit
 import Speech
 
+func isSameUrl (a: String, b: String) -> Bool {
+    // remove a trailing slash
+    let _a = a.hasSuffix("/") ? String(a.dropLast()) : a
+    let _b = b.hasSuffix("/") ? String(b.dropLast()) : b
+    return _a == _b
+}
+
+func isHelpfeelRootUrl (url: String) -> Bool {
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    return isSameUrl(a: url, b: appDelegate.helpfeelUrl!)
+}
+
 class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate {
     @IBOutlet var webView: WKWebView!
     private var webViewUrl = ""
@@ -90,16 +102,9 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         super.didReceiveMemoryWarning()
     }
     
-    func isSameUrl (a: String, b: String) -> Bool {
-        // remove a trailing slash
-        let _a = a.hasSuffix("/") ? String(a.dropLast()) : a
-        let _b = b.hasSuffix("/") ? String(b.dropLast()) : b
-        return _a == _b
-    }
-    
-    func isHelpfeelRootUrl (url: String) -> Bool {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        return self.isSameUrl(a: url, b: appDelegate.helpfeelUrl!)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.requestRecognizerAuthorization()
     }
     
     func attachNavItemButtons() {
@@ -110,7 +115,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     // リクエスト前
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
         let url = navigationAction.request.url!.absoluteString
-        if (self.isSameUrl(a: self.webViewUrl, b: url)) {
+        if (isSameUrl(a: self.webViewUrl, b: url)) {
             decisionHandler(.allow)
             return
         }
@@ -118,7 +123,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         if (!url.hasPrefix("http://") && !url.hasPrefix("https://")) {
             return
         }
-        if (self.isHelpfeelRootUrl(url: url)) {
+        if (isHelpfeelRootUrl(url: url)) {
             // Return to the root of the transition history
             self.navigationController!.popToRootViewController(animated: true)
             return
@@ -142,6 +147,28 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         self.navigationItem.title = webView.title!
     }
     
+    // 音声入力
+    private func requestRecognizerAuthorization () {
+        SFSpeechRecognizer.requestAuthorization({ authStates in
+            // ここはメインスレッドでは実行されない
+            // メインスレッドの更新のために参照したいのでOpetationQueueに登録する
+            OperationQueue.main.addOperation { [weak self] in
+                guard self != nil else { return }
+                switch authStates {
+                case .authorized:
+                    print("authorized")
+                case .denied:
+                    print("denied")
+                case .restricted:
+                    // この端末では許可されなかった
+                    print("restricted")
+                case .notDetermined:
+                    print("notDetermined")
+                }
+            }
+        })
+    }
+
     func setupNextVC(url: String, button: Int, vc: UIViewController) {
         (vc as? HelpfeelViewController)?.webViewUrl = url
         var item = vc.navigationItem
