@@ -8,12 +8,19 @@
 
 import UIKit
 import WebKit
+import Speech
 
 class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate {
     @IBOutlet var webView: WKWebView!
     private var webViewUrl = ""
 
     private static let processPool = WKProcessPool()
+    
+    // 音声入力の設定
+    private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "ja-JP"))!
+    private var recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+    private var recognitionTask = SFSpeechRecognitionTask()
+    private let audioEngine = AVAudioEngine()
     
     @IBAction
     func closeSelf(sender: UIButton) {
@@ -61,6 +68,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        recognizer.delegate = self as? SFSpeechRecognizerDelegate; // 音声入力の設定
         
         self.initWkWebView()
         self.navigationController!.interactivePopGestureRecognizer!.delegate = self
