@@ -24,11 +24,22 @@ func isHelpfeelRootUrl (url: String) -> Bool {
     return isSameUrl(a: url, b: appDelegate.helpfeelUrl!)
 }
 
-class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
+class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, SFSpeechRecognizerDelegate {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == appName {
             let body = message.body as! String
-            print(body)
+            switch body {
+            case "button:L":
+                requestRecognizerAuthorization()
+            case "button:R":
+                if audioEngine.isRunning {
+                    audioEngine.stop()
+                    recognitionRequest?.endAudio()
+                    print("audioEngine is stopped.")
+                }
+            default:
+                break
+            }
         }
     }
     
@@ -39,8 +50,8 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     
     // 音声入力の設定
     private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "ja-JP"))!
-    private var recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-    private var recognitionTask = SFSpeechRecognitionTask()
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
     
     @IBAction
@@ -95,7 +106,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        recognizer.delegate = self as? SFSpeechRecognizerDelegate; // 音声入力の設定
+        recognizer.delegate = self; // 音声入力の設定
         
         self.initWkWebView()
         self.navigationController!.interactivePopGestureRecognizer!.delegate = self
@@ -115,11 +126,6 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.requestRecognizerAuthorization()
     }
     
     func attachNavItemButtons() {
@@ -158,7 +164,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
     }
     
     // 読み込み完了
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    private func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         self.navigationItem.title = webView.title!
     }
     
@@ -172,11 +178,12 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
                 switch authStates {
                 case .authorized:
                     print("authorized")
+                    // 音声認識を開始
+                    try! self!.startRecording()
                 case .denied:
                     print("denied")
                 case .restricted:
-                    // この端末では許可されなかった
-                    print("restricted")
+                    print("restricted") // この端末では許可されなかった
                 case .notDetermined:
                     print("notDetermined")
                 }
@@ -197,10 +204,49 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         item.leftItemsSupplementBackButton = true
         item.title = ""
     }
-
-    var detailItem: String? {
-        didSet {
-//            configureView()
+    
+    private func startRecording () throws {
+        // 前回のタスクが残っている場合はクリアする
+        if let recognitionTask = recognitionTask {
+            recognitionTask.cancel()
+            self.recognitionTask = nil
         }
+        let audioSession = AVAudioSession.sharedInstance()
+        try audioSession.setCategory(AVAudioSession.Category.record)
+        try audioSession.setMode(AVAudioSession.Mode.measurement)
+        try audioSession.setActive(true)
+        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+        
+        guard let inputNode: AVAudioInputNode = audioEngine.inputNode else {
+            fatalError("Audio engine has no input node") }
+        guard let recognitionRequest = recognitionRequest else {
+            fatalError("Unable to created a SFSpeechAudioBufferRecognitionRequest object") }
+        
+        recognitionRequest.shouldReportPartialResults = true
+        recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
+            guard self != nil else { return }
+            var isFinal = false
+            if (result != nil) {
+                let fullText = result!.bestTranscription.formattedString
+                isFinal = result!.isFinal
+                // TODO: WebView内のウェブページに送る
+                print("###", fullText)
+            }
+            if error != nil || isFinal {
+                self!.audioEngine.stop()
+                inputNode.removeTap(onBus: 0)
+                self!.recognitionRequest = nil
+                self!.recognitionTask = nil
+            }
+        }
+        
+        // 収録した音声バッファをrecognitionRequestに追加する
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
+            self.recognitionRequest?.append(buffer)
+        }
+        
+        audioEngine.prepare()
+        try audioEngine.start()
     }
 }
