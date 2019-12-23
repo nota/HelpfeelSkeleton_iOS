@@ -10,6 +10,8 @@ import UIKit
 import WebKit
 import Speech
 
+let appName = "helpfeelSkeleton"
+
 func isSameUrl (a: String, b: String) -> Bool {
     // remove a trailing slash
     let _a = a.hasSuffix("/") ? String(a.dropLast()) : a
@@ -22,7 +24,14 @@ func isHelpfeelRootUrl (url: String) -> Bool {
     return isSameUrl(a: url, b: appDelegate.helpfeelUrl!)
 }
 
-class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate {
+class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == appName {
+            let body = message.body as! String
+            print(body)
+        }
+    }
+    
     @IBOutlet var webView: WKWebView!
     private var webViewUrl = ""
 
@@ -68,6 +77,11 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         let processPool = HelpfeelViewController.processPool
         webViewConfiguration.processPool = processPool
         
+        // WebView内に表示したページからメッセージを受け取るための設定
+        let userController: WKUserContentController = WKUserContentController()
+        userController.add(self, name: appName)
+        webViewConfiguration.userContentController = userController
+        
         // Set webView size
         let statusBarHeight: CGFloat! = UIApplication.shared.statusBarFrame.height
         self.webView = WKWebView(
@@ -77,6 +91,7 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         self.webView.navigationDelegate = self
         self.view.addSubview(self.webView)
     }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
