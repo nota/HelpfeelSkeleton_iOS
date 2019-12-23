@@ -25,24 +25,6 @@ func isHelpfeelRootUrl (url: String) -> Bool {
 }
 
 class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler, SFSpeechRecognizerDelegate {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        if message.name == appName {
-            let body = message.body as! String
-            switch body {
-            case "button:L":
-                requestRecognizerAuthorization()
-            case "button:R":
-                if audioEngine.isRunning {
-                    audioEngine.stop()
-                    recognitionRequest?.endAudio()
-                    print("audioEngine is stopped.")
-                }
-            default:
-                break
-            }
-        }
-    }
-    
     @IBOutlet var webView: WKWebView!
     private var webViewUrl = ""
 
@@ -102,7 +84,33 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
         self.webView.navigationDelegate = self
         self.view.addSubview(self.webView)
     }
-
+    
+    // WebViewで表示中のページからメッセージを受信する
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if message.name == appName {
+            let body = message.body as! String
+            switch body {
+            case "button:L":
+                requestRecognizerAuthorization()
+            case "button:R":
+                if audioEngine.isRunning {
+                    audioEngine.stop()
+                    recognitionRequest?.endAudio()
+                    print("audioEngine is stopped.")
+                }
+            default:
+                break
+            }
+        }
+    }
+    
+    // WebViewで表示中のページで定義されたjs関数を実行する
+    private func sendTextToWebView(text: String) {
+        if audioEngine.isRunning {
+            self.webView.evaluateJavaScript("window.onUpdateSpeechText('\(text)')", completionHandler: nil)
+            // print(">>>", text)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -227,10 +235,10 @@ class HelpfeelViewController: UIViewController, UIGestureRecognizerDelegate, WKN
             guard self != nil else { return }
             var isFinal = false
             if (result != nil) {
+                // XXX: bestTranscription.segmentsを見てもいいかも
                 let fullText = result!.bestTranscription.formattedString
                 isFinal = result!.isFinal
-                // TODO: WebView内のウェブページに送る
-                print("###", fullText)
+                self!.sendTextToWebView(text: fullText)
             }
             if error != nil || isFinal {
                 self!.audioEngine.stop()
