@@ -133,6 +133,7 @@ class MasterViewController: UITableViewController {
     
     func popupNextVC(title: String, vc: UIViewController) {
         let navVC: UINavigationController = UINavigationController(rootViewController: vc)
+        navVC.modalPresentationStyle = .fullScreen
         let item = navVC.topViewController!.navigationItem
         let closeButton = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(closeSelf(sender:)))
         closeButton.tintColor = UIColor.darkGray
